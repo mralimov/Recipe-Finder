@@ -452,37 +452,10 @@ function hmrAcceptRun(bundle, id) {
   acceptedAssets[id] = true;
 }
 
-},{}],"2hFLu":[function(require,module,exports) {
-require('./bundle-manifest').register(JSON.parse("{\"5gbPA\":\"index.1260cbf1.js\",\"27vdb\":\"icons.a22bdf6e.svg\"}"));
-},{"./bundle-manifest":"7fGj6"}],"7fGj6":[function(require,module,exports) {
-"use strict";
-
-var mapping = {};
-
-function register(pairs) {
-  var keys = Object.keys(pairs);
-
-  for (var i = 0; i < keys.length; i++) {
-    mapping[keys[i]] = pairs[keys[i]];
-  }
-}
-
-function resolve(id) {
-  var resolved = mapping[id];
-
-  if (resolved == null) {
-    throw new Error('Could not resolve bundle with id ' + id);
-  }
-
-  return resolved;
-}
-
-module.exports.register = register;
-module.exports.resolve = resolve;
 },{}],"1mIsM":[function(require,module,exports) {
-var _urlImgIconsSvg = require('url:../img/icons.svg');
+var _imgIconsSvg = require('./../img/icons.svg');
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
-var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
+var _imgIconsSvgDefault = _parcelHelpers.interopDefault(_imgIconsSvg);
 const {async} = require('q');
 const recipeContainer = document.querySelector('.recipe');
 const timeout = function (s) {
@@ -521,38 +494,38 @@ const showRecipe = async () => {
         <div class="recipe__details">
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="${_urlImgIconsSvgDefault.default}#icon-clock"></use>
+              <use href="${_imgIconsSvgDefault.default}#icon-clock"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--minutes">${recipe.cookingTime}</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="${_urlImgIconsSvgDefault.default}#icon-users"></use>
+              <use href="${_imgIconsSvgDefault.default}#icon-users"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
             <span class="recipe__info-text">servings</span>
             <div class="recipe__info-buttons">
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="${_urlImgIconsSvgDefault.default}#icon-minus-circle"></use>
+                  <use href="${_imgIconsSvgDefault.default}#icon-minus-circle"></use>
                 </svg>
               </button>
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="${_urlImgIconsSvgDefault.default}#icon-plus-circle"></use>
+                  <use href="${_imgIconsSvgDefault.default}#icon-plus-circle"></use>
                 </svg>
               </button>
             </div>
           </div>
           <div class="recipe__user-generated">
             <svg>
-              <use href="${_urlImgIconsSvgDefault.default}#icon-user"></use>
+              <use href="${_imgIconsSvgDefault.default}#icon-user"></use>
             </svg>
           </div>
           <button class="btn--round">
             <svg class="">
-              <use href="${_urlImgIconsSvgDefault.default}#icon-bookmark-fill"></use>
+              <use href="${_imgIconsSvgDefault.default}#icon-bookmark-fill"></use>
             </svg>
           </button>
         </div>
@@ -564,7 +537,7 @@ const showRecipe = async () => {
       return ` 
             <li class="recipe__ingredient">
               <svg class="recipe__icon">
-                <use href="${_urlImgIconsSvgDefault.default}#icon-check"></use>
+                <use href="${_imgIconsSvgDefault.default}#icon-check"></use>
               </svg>
               <div class="recipe__quantity">${ing.quantity}</div>
               <div class="recipe__description">
@@ -590,7 +563,7 @@ const showRecipe = async () => {
           >
             <span>Directions</span>
             <svg class="search__icon">
-              <use href="${_urlImgIconsSvgDefault.default}#icon-arrow-right"></use>
+              <use href="${_imgIconsSvgDefault.default}#icon-arrow-right"></use>
             </svg>
           </a>
         </div>
@@ -603,7 +576,7 @@ const showRecipe = async () => {
 };
 showRecipe();
 
-},{"q":"4666G","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","url:../img/icons.svg":"6nOe0"}],"4666G":[function(require,module,exports) {
+},{"q":"4666G","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","./../img/icons.svg":"7dh2Q"}],"4666G":[function(require,module,exports) {
 var define;
 var process = require("process");
 // vim:ts=4:sts=4:sw=4:
@@ -2669,119 +2642,6 @@ exports.export = function (dest, destName, get) {
     get: get
   });
 };
-},{}],"6nOe0":[function(require,module,exports) {
-module.exports = require('./bundle-url').getBundleURL() + require('./relative-path')("5gbPA", "27vdb")
-},{"./bundle-url":"3nFkr","./relative-path":"3gCji"}],"3nFkr":[function(require,module,exports) {
-"use strict";
+},{}],"7dh2Q":[function() {},{}]},["5cvg8","1mIsM"], "1mIsM", "parcelRequire5e36")
 
-/* globals document:readonly */
-var bundleURL = null;
-
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
-
-  return bundleURL;
-}
-
-function getBundleURL() {
-  try {
-    throw new Error();
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^)\n]+/g);
-
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
-
-  return '/';
-}
-
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^/]+$/, '$1') + '/';
-} // TODO: Replace uses with `new URL(url).origin` when ie11 is no longer supported.
-
-
-function getOrigin(url) {
-  let matches = ('' + url).match(/(https?|file|ftp):\/\/[^/]+/);
-
-  if (!matches) {
-    throw new Error('Origin not found');
-  }
-
-  return matches[0];
-}
-
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-exports.getOrigin = getOrigin;
-},{}],"3gCji":[function(require,module,exports) {
-"use strict";
-
-var resolve = require('./bundle-manifest').resolve;
-
-module.exports = function (fromId, toId) {
-  return relative(dirname(resolve(fromId)), resolve(toId));
-};
-
-function dirname(_filePath) {
-  if (_filePath === '') {
-    return '.';
-  }
-
-  var filePath = _filePath[_filePath.length - 1] === '/' ? _filePath.slice(0, _filePath.length - 1) : _filePath;
-  var slashIndex = filePath.lastIndexOf('/');
-  return slashIndex === -1 ? '.' : filePath.slice(0, slashIndex);
-}
-
-function relative(from, to) {
-  if (from === to) {
-    return '';
-  }
-
-  var fromParts = from.split('/');
-
-  if (fromParts[0] === '.') {
-    fromParts.shift();
-  }
-
-  var toParts = to.split('/');
-
-  if (toParts[0] === '.') {
-    toParts.shift();
-  } // Find where path segments diverge.
-
-
-  var i;
-  var divergeIndex;
-
-  for (i = 0; (i < toParts.length || i < fromParts.length) && divergeIndex == null; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      divergeIndex = i;
-    }
-  } // If there are segments from "from" beyond the point of divergence,
-  // return back up the path to that point using "..".
-
-
-  var parts = [];
-
-  for (i = 0; i < fromParts.length - divergeIndex; i++) {
-    parts.push('..');
-  } // If there are segments from "to" beyond the point of divergence,
-  // continue using the remaining segments.
-
-
-  if (toParts.length > divergeIndex) {
-    parts.push.apply(parts, toParts.slice(divergeIndex));
-  }
-
-  return parts.join('/');
-}
-
-module.exports._dirname = dirname;
-module.exports._relative = relative;
-},{"./bundle-manifest":"7fGj6"}]},["5cvg8","2hFLu","1mIsM"], "1mIsM", "parcelRequire5e36")
-
-//# sourceMappingURL=index.1260cbf1.js.map
+//# sourceMappingURL=index.HASH_REF_acdd569e0777db4c948217651260cbf1.js.map
