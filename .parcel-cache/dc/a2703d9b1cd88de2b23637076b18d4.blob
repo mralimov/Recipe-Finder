@@ -470,17 +470,7 @@ const showRecipe = async () => {
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     console.log(res, data);
-    let {recipe} = data.data;
-    recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      soureUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients
-    };
+    let recipe = data.data.recipe;
     console.log(recipe);
   } catch (err) {
     alert(err);
@@ -2514,4 +2504,4 @@ process.umask = function () {
 
 },{}]},["5cvg8","1mIsM"], "1mIsM", "parcelRequire5e36")
 
-//# sourceMappingURL=index.1260cbf1.js.map
+//# sourceMappingURL=index.HASH_REF_acdd569e0777db4c948217651260cbf1.js.map
