@@ -570,7 +570,6 @@ const showRecipe = async () => {
           </a>
         </div>
     `;
-    recipeContainer.insertAdjacentHTML('afterbegin', markup);
   } catch (err) {
     alert(err);
   }
@@ -2603,4 +2602,4 @@ process.umask = function () {
 
 },{}]},["5cvg8","1mIsM"], "1mIsM", "parcelRequire5e36")
 
-//# sourceMappingURL=index.1260cbf1.js.map
+//# sourceMappingURL=index.HASH_REF_acdd569e0777db4c948217651260cbf1.js.map
