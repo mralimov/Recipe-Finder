@@ -1,4 +1,5 @@
-const { async } = require('q');
+import * as model from './model.js';
+
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import icons from 'url:../img/icons.svg';
@@ -33,28 +34,11 @@ const showRecipe = async () => {
 
     //1) Loading Spinner
     renderSpinner(recipeContainer);
-    const res = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
-    );
 
-    const data = await res.json();
+    await model.loadRecipe(id);
+    const { recipe } = model.state;
 
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
-    console.log(res, data);
-
-    let { recipe } = data.data;
-    recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      soureUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    };
-
+    //2) Rendering recipe
     const markup = `
     <figure class="recipe__fig">
           <img src="${recipe.image}" alt="${
@@ -156,6 +140,4 @@ const showRecipe = async () => {
   }
 };
 
-['haschange', 'load'].forEach((ev) =>
-  window.addEventListenerev(ev, showRecipe)
-);
+['haschange', 'load'].forEach((ev) => window.addEventListener(ev, showRecipe));
