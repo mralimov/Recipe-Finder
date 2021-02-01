@@ -7,13 +7,13 @@ export const state = {
 
 export const loadRecipe = async (id) => {
   try {
-    const data = await getJSON(`${API_URL}/${id}}`);
+    // const data = await getJSON(`${API_URL}/${id}}`);
 
-    // const res = await fetch(`${API_URL}/${id}`);
+    const res = await fetch(`${API_URL}/${id}`);
 
-    // const data = await res.json();
+    const data = await res.json();
 
-    // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
 
     const { recipe } = data.data;
     state.recipe = {

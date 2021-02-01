@@ -492,6 +492,7 @@ const recipeContainer = document.querySelector('.recipe');
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
+    console.log(id);
     if (!id) return;
     _viewsRecipeViewJsDefault.default.renderSpinner();
     // 1) Loading Spinner
@@ -502,7 +503,10 @@ const controlRecipes = async function () {
     alert(err);
   }
 };
-['haschange', 'load'].forEach(ev => window.addEventListener(ev, controlRecipes));
+const init = () => {
+  _viewsRecipeViewJsDefault.default.addHandlerRender(controlRecipes);
+};
+init();
 
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","core-js/stable":"5FWMh","regenerator-runtime/runtime":"55WiQ","./model.js":"1CGDk","./views/recipeView.js":"4Oxfy"}],"HNevC":[function(require,module,exports) {
 "use strict";
@@ -12463,16 +12467,16 @@ _parcelHelpers.export(exports, "loadRecipe", function () {
 });
 require('regenerator-runtime');
 var _config = require('./config');
-var _helpers = require('./helpers');
+require('./helpers');
 const state = {
   recipe: {}
 };
 const loadRecipe = async id => {
   try {
-    const data = await _helpers.getJSON(`${_config.API_URL}/${id}}`);
-    // const res = await fetch(`${API_URL}/${id}`);
-    // const data = await res.json();
-    // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    // const data = await getJSON(`${API_URL}/${id}}`);
+    const res = await fetch(`${_config.API_URL}/${id}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     const {recipe} = data.data;
     state.recipe = {
       id: recipe.id,
@@ -12509,7 +12513,7 @@ _parcelHelpers.export(exports, "getJSON", function () {
   return getJSON;
 });
 require('regenerator-runtime');
-var _helpers = require('./helpers');
+var _config = require('./config');
 const timeout = function (s) {
   return new Promise(function (_, reject) {
     setTimeout(function () {
@@ -12520,7 +12524,7 @@ const timeout = function (s) {
 const getJSON = async function (url) {
   try {
     const fetchPromise = fetch(url);
-    const res = await Promice.race([fetchPromise, timeout(_helpers.TIMEOUT_SEC)]);
+    const res = await Promice.race([fetchPromise, timeout(_config.TIMEOUT_SEC)]);
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     return data;
@@ -12529,7 +12533,7 @@ const getJSON = async function (url) {
   }
 };
 
-},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","regenerator-runtime":"55WiQ","./helpers":"Fq8n8"}],"4Oxfy":[function(require,module,exports) {
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","regenerator-runtime":"55WiQ","./config":"4ow7u"}],"4Oxfy":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
 var _urlImgIconsSvg = require('url:../../img/icons.svg');
@@ -12614,6 +12618,9 @@ class Recipeview {
     const markup = _classPrivateMethodGet(this, _generateMarkup, _generateMarkup2).call(this);
     _classPrivateMethodGet(this, _clear, _clear2).call(this);
     _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markup);
+  }
+  addHandlerRender(handler) {
+    ['haschange', 'load'].forEach(ev => window.addEventListener(ev, handler));
   }
 }
 var _clear2 = function _clear2() {
