@@ -487,13 +487,6 @@ var _viewsRecipeViewJsDefault = _parcelHelpers.interopDefault(_viewsRecipeViewJs
 require('core-js/stable');
 require('regenerator-runtime/runtime');
 const recipeContainer = document.querySelector('.recipe');
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
 // https://forkify-api.herokuapp.com/v2
 // /////////////////////////////////////
 const controlRecipes = async function () {
@@ -12469,14 +12462,17 @@ _parcelHelpers.export(exports, "loadRecipe", function () {
   return loadRecipe;
 });
 require('regenerator-runtime');
+var _config = require('./config');
+var _helpers = require('./helpers');
 const state = {
   recipe: {}
 };
 const loadRecipe = async id => {
   try {
-    const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    const data = await _helpers.getJSON(`${_config.API_URL}/${id}}`);
+    // const res = await fetch(`${API_URL}/${id}`);
+    // const data = await res.json();
+    // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     const {recipe} = data.data;
     state.recipe = {
       id: recipe.id,
@@ -12490,11 +12486,50 @@ const loadRecipe = async id => {
     };
     console.log(state.recipe);
   } catch (err) {
-    alert(err);
+    console.error(`This is loadRecipe ${err}`);
   }
 };
 
-},{"regenerator-runtime":"55WiQ","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"4Oxfy":[function(require,module,exports) {
+},{"regenerator-runtime":"55WiQ","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","./config":"4ow7u","./helpers":"Fq8n8"}],"4ow7u":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+_parcelHelpers.export(exports, "API_URL", function () {
+  return API_URL;
+});
+_parcelHelpers.export(exports, "TIMEOUT_SEC", function () {
+  return TIMEOUT_SEC;
+});
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+const TIMEOUT_SEC = 10;
+
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"Fq8n8":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+_parcelHelpers.export(exports, "getJSON", function () {
+  return getJSON;
+});
+require('regenerator-runtime');
+var _helpers = require('./helpers');
+const timeout = function (s) {
+  return new Promise(function (_, reject) {
+    setTimeout(function () {
+      reject(new Error(`Request took too long! Timeout after ${s} second`));
+    }, s * 1000);
+  });
+};
+const getJSON = async function (url) {
+  try {
+    const fetchPromise = fetch(url);
+    const res = await Promice.race([fetchPromise, timeout(_helpers.TIMEOUT_SEC)]);
+    const data = await res.json();
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","regenerator-runtime":"55WiQ","./helpers":"Fq8n8"}],"4Oxfy":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
 var _urlImgIconsSvg = require('url:../../img/icons.svg');
