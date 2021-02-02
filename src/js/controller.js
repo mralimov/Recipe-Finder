@@ -13,6 +13,7 @@ const recipeContainer = document.querySelector('.recipe');
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
+    console.log(id);
 
     if (!id) return;
     recipeView.renderSpinner();
@@ -23,10 +24,11 @@ const controlRecipes = async function () {
     //2) Rendering recipe
     recipeView.render(model.state.recipe);
   } catch (err) {
-    alert(err);
+    recipeView.renderError();
   }
 };
 
-['haschange', 'load'].forEach((ev) =>
-  window.addEventListener(ev, controlRecipes)
-);
+const init = () => {
+  recipeView.addHandlerRender(controlRecipes);
+};
+init();
