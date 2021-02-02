@@ -1,8 +1,11 @@
 import icons from 'url:../../img/icons.svg';
 import { Fraction } from 'fractional';
+
 class Recipeview {
   #parentElement = document.querySelector('.recipe');
   #data;
+  #errorMessage = 'We could not find that recipe. Please try another one!';
+  #successMessage = '';
 
   render(data) {
     this.#data = data;
@@ -14,7 +17,7 @@ class Recipeview {
   #clear() {
     this.#parentElement.innerHTML = '';
   }
-  renderSpinner = function () {
+  renderSpinner() {
     const markupSpinner = `
       <div class="spinner">
             <svg>
@@ -22,9 +25,24 @@ class Recipeview {
             </svg>
           </div>
       `;
-    this.#parentElement.innerHTML = '';
+    this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markupSpinner);
-  };
+  }
+
+  renderError(message = this.#errorMessage) {
+    const markupError = `
+      <div class="error">
+            <div>
+              <svg>
+                <use href="${icons}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+      `;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markupError);
+  }
 
   addHandlerRender(handler) {
     ['haschange', 'load'].forEach((ev) => window.addEventListener(ev, handler));

@@ -500,7 +500,7 @@ const controlRecipes = async function () {
     // 2) Rendering recipe
     _viewsRecipeViewJsDefault.default.render(_modelJs.state.recipe);
   } catch (err) {
-    alert(err);
+    _viewsRecipeViewJsDefault.default.renderError();
   }
 };
 const init = () => {
@@ -12467,16 +12467,16 @@ _parcelHelpers.export(exports, "loadRecipe", function () {
 });
 require('regenerator-runtime');
 var _config = require('./config');
-require('./helpers');
+var _helpers = require('./helpers');
 const state = {
   recipe: {}
 };
-const loadRecipe = async id => {
+const loadRecipe = async function (id) {
   try {
-    // const data = await getJSON(`${API_URL}/${id}}`);
-    const res = await fetch(`${_config.API_URL}/${id}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    const data = await _helpers.getJSON(`${_config.API_URL}/${id}}`);
+    // const res = await fetch(`${API_URL}/${id}`);
+    // const data = await res.json();
+    // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     const {recipe} = data.data;
     state.recipe = {
       id: recipe.id,
@@ -12491,6 +12491,7 @@ const loadRecipe = async id => {
     console.log(state.recipe);
   } catch (err) {
     console.error(`This is loadRecipe ${err}`);
+    throw err;
   }
 };
 
@@ -12539,19 +12540,6 @@ _parcelHelpers.defineInteropFlag(exports);
 var _urlImgIconsSvg = require('url:../../img/icons.svg');
 var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
 var _fractional = require('fractional');
-function _defineProperty(obj, key, value) {
-  if ((key in obj)) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
 function _classPrivateFieldGet(receiver, privateMap) {
   var descriptor = privateMap.get(receiver);
   if (!descriptor) {
@@ -12585,6 +12573,8 @@ function _classPrivateFieldSet(receiver, privateMap, value) {
 }
 var _parentElement = new WeakMap();
 var _data = new WeakMap();
+var _errorMessage = new WeakMap();
+var _successMessage = new WeakMap();
 var _clear = new WeakSet();
 var _generateMarkup = new WeakSet();
 var _generateMarkupIngredient = new WeakSet();
@@ -12601,16 +12591,13 @@ class Recipeview {
       writable: true,
       value: void 0
     });
-    _defineProperty(this, "renderSpinner", function () {
-      const markupSpinner = `
-      <div class="spinner">
-            <svg>
-              <use href="${_urlImgIconsSvgDefault.default}#icon-loader"></use>
-            </svg>
-          </div>
-      `;
-      _classPrivateFieldGet(this, _parentElement).innerHTML = '';
-      _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markupSpinner);
+    _errorMessage.set(this, {
+      writable: true,
+      value: 'We could not find that recipe. Please try another one!'
+    });
+    _successMessage.set(this, {
+      writable: true,
+      value: ''
     });
   }
   render(data) {
@@ -12618,6 +12605,31 @@ class Recipeview {
     const markup = _classPrivateMethodGet(this, _generateMarkup, _generateMarkup2).call(this);
     _classPrivateMethodGet(this, _clear, _clear2).call(this);
     _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markup);
+  }
+  renderSpinner() {
+    const markupSpinner = `
+      <div class="spinner">
+            <svg>
+              <use href="${_urlImgIconsSvgDefault.default}#icon-loader"></use>
+            </svg>
+          </div>
+      `;
+    _classPrivateMethodGet(this, _clear, _clear2).call(this);
+    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markupSpinner);
+  }
+  renderError(message = _classPrivateFieldGet(this, _errorMessage)) {
+    const markupError = `
+      <div class="error">
+            <div>
+              <svg>
+                <use href="${_urlImgIconsSvgDefault.default}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+      `;
+    _classPrivateMethodGet(this, _clear, _clear2).call(this);
+    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markupError);
   }
   addHandlerRender(handler) {
     ['haschange', 'load'].forEach(ev => window.addEventListener(ev, handler));
