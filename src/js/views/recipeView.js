@@ -44,6 +44,21 @@ class Recipeview {
     this.#parentElement.insertAdjacentHTML('afterbegin', markupError);
   }
 
+  renderSuccess(message = this.#successMessage) {
+    const markupSuccess = `
+      <div class="message">
+            <div>
+              <svg>
+                <use href="${icons}#icon-smile"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+      `;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markupSuccess);
+  }
+
   addHandlerRender(handler) {
     ['haschange', 'load'].forEach((ev) => window.addEventListener(ev, handler));
   }
