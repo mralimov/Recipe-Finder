@@ -12465,6 +12465,9 @@ _parcelHelpers.export(exports, "state", function () {
 _parcelHelpers.export(exports, "loadRecipe", function () {
   return loadRecipe;
 });
+_parcelHelpers.export(exports, "loadSearchResults", function () {
+  return loadSearchResults;
+});
 require('regenerator-runtime');
 var _config = require('./config');
 var _helpers = require('./helpers');
@@ -12473,7 +12476,7 @@ const state = {
 };
 const loadRecipe = async function (id) {
   try {
-    const data = await _helpers.getJSON(`${_config.API_URL}/${id}}`);
+    const data = await _helpers.getJSON(`${_config.API_URL}${id}`);
     // const res = await fetch(`${API_URL}/${id}`);
     // const data = await res.json();
     // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
@@ -12494,6 +12497,16 @@ const loadRecipe = async function (id) {
     throw err;
   }
 };
+const loadSearchResults = async query => {
+  try {
+    const allRecipe = await _helpers.getJSON(`${_config.API_URL}?search=${query}`);
+    console.log(allRecipe);
+  } catch (err) {
+    console.error(`This is loadRecipe ${err}`);
+    throw err;
+  }
+};
+loadSearchResults('pasta');
 
 },{"regenerator-runtime":"55WiQ","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","./config":"4ow7u","./helpers":"Fq8n8"}],"4ow7u":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -12504,7 +12517,7 @@ _parcelHelpers.export(exports, "API_URL", function () {
 _parcelHelpers.export(exports, "TIMEOUT_SEC", function () {
   return TIMEOUT_SEC;
 });
-const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 const TIMEOUT_SEC = 10;
 
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"Fq8n8":[function(require,module,exports) {
@@ -12525,7 +12538,7 @@ const timeout = function (s) {
 const getJSON = async function (url) {
   try {
     const fetchPromise = fetch(url);
-    const res = await Promice.race([fetchPromise, timeout(_config.TIMEOUT_SEC)]);
+    const res = await Promise.race([fetchPromise, timeout(_config.TIMEOUT_SEC)]);
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     return data;

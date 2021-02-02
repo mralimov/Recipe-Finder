@@ -7,7 +7,7 @@ export const state = {
 
 export const loadRecipe = async function (id) {
   try {
-    const data = await getJSON(`${API_URL}/${id}}`);
+    const data = await getJSON(`${API_URL}${id}`);
 
     // const res = await fetch(`${API_URL}/${id}`);
 
@@ -32,3 +32,14 @@ export const loadRecipe = async function (id) {
     throw err;
   }
 };
+
+export const loadSearchResults = async (query) => {
+  try {
+    const allRecipe = await getJSON(`${API_URL}?search=${query}`);
+    console.log(allRecipe);
+  } catch (err) {
+    console.error(`This is loadRecipe ${err}`);
+    throw err;
+  }
+};
+loadSearchResults('pasta');
