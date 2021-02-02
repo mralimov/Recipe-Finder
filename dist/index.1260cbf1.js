@@ -486,13 +486,16 @@ var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 var _viewsRecipeViewJsDefault = _parcelHelpers.interopDefault(_viewsRecipeViewJs);
 var _viewsSearchView = require('./views/searchView');
 var _viewsSearchViewDefault = _parcelHelpers.interopDefault(_viewsSearchView);
+var _viewsResultsView = require('./views/resultsView');
+var _viewsResultsViewDefault = _parcelHelpers.interopDefault(_viewsResultsView);
 require('core-js/stable');
 require('regenerator-runtime/runtime');
 require('regenerator-runtime');
 const controlRecipes = async function () {
   try {
+    _viewsResultsViewDefault.default.renderSpinner();
+    console.log(_viewsResultsViewDefault.default);
     const id = window.location.hash.slice(1);
-    console.log(id);
     if (!id) return;
     _viewsRecipeViewJsDefault.default.renderSpinner();
     // 1) Loading Spinner
@@ -512,6 +515,7 @@ const controlSearchResults = async () => {
     await _modelJs.loadSearchResults(query);
     // 3) Render results
     console.log(_modelJs.state.search.results);
+    _viewsResultsViewDefault.default.render(_modelJs.state.search.results);
   } catch (err) {
     console.log(err);
   }
@@ -523,7 +527,7 @@ const init = () => {
 };
 init();
 
-},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","core-js/stable":"5FWMh","regenerator-runtime/runtime":"55WiQ","./model.js":"1CGDk","./views/recipeView.js":"4Oxfy","regenerator-runtime":"55WiQ","./views/searchView":"7smyK"}],"HNevC":[function(require,module,exports) {
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","core-js/stable":"5FWMh","regenerator-runtime/runtime":"55WiQ","./model.js":"1CGDk","./views/recipeView.js":"4Oxfy","regenerator-runtime":"55WiQ","./views/searchView":"7smyK","./views/resultsView":"1W90M"}],"HNevC":[function(require,module,exports) {
 "use strict";
 
 exports.interopDefault = function (a) {
@@ -13284,6 +13288,58 @@ class SearchView {
 }
 exports.default = new SearchView();
 
-},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}]},["5cvg8","2hFLu","1mIsM"], "1mIsM", "parcelRequire5e36")
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"1W90M":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+var _urlImgIconsSvg = require('url:../../img/icons.svg');
+var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
+var _ViewJs = require('./View.js');
+var _ViewJsDefault = _parcelHelpers.interopDefault(_ViewJs);
+function _defineProperty(obj, key, value) {
+  if ((key in obj)) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+class ResultsView extends _ViewJsDefault.default {
+  constructor(...args) {
+    super(...args);
+    _defineProperty(this, "_parentElement", document.querySelector('.results'));
+  }
+  _generateMarkup() {
+    return this._data.map(this._generateMarkupPreview).join('');
+  }
+  _generateMarkupPreview(results) {
+    console.log(results);
+    return `
+    <li class="preview">
+          <a class="preview__link preview__link--active" href="${results.id}">
+            <figure class="preview__fig">
+              <img src="${results.image}" alt="Test" />
+            </figure>
+            <div class="preview__data">
+              <h4 class="preview__title">${results.title}</h4>
+              <p class="preview__publisher">${results.publisher}</p>
+              <div class="preview__user-generated">
+                <svg>
+                  <use href="${_urlImgIconsSvgDefault.default}#icon-user"></use>
+                </svg>
+              </div>
+            </div>
+          </a>
+        </li>
+    `;
+  }
+}
+exports.default = new ResultsView();
+
+},{"./View.js":"4odjm","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","url:../../img/icons.svg":"6nOe0"}]},["5cvg8","2hFLu","1mIsM"], "1mIsM", "parcelRequire5e36")
 
 //# sourceMappingURL=index.1260cbf1.js.map
