@@ -491,10 +491,12 @@ var _viewsResultsViewDefault = _parcelHelpers.interopDefault(_viewsResultsView);
 require('core-js/stable');
 require('regenerator-runtime/runtime');
 require('regenerator-runtime');
+// This is coming from Parcel
+if (module.hot) {
+  module.hot.accept();
+}
 const controlRecipes = async function () {
   try {
-    _viewsResultsViewDefault.default.renderSpinner();
-    console.log(_viewsResultsViewDefault.default);
     const id = window.location.hash.slice(1);
     if (!id) return;
     _viewsRecipeViewJsDefault.default.renderSpinner();
@@ -506,22 +508,21 @@ const controlRecipes = async function () {
     _viewsRecipeViewJsDefault.default.renderError();
   }
 };
-const controlSearchResults = async () => {
+const controlSearchResults = async function () {
   try {
+    _viewsResultsViewDefault.default.renderSpinner();
     // 1) Get search Query
     const query = _viewsSearchViewDefault.default.getQuery();
     if (!query) return;
     // 2) loadsearchResults
     await _modelJs.loadSearchResults(query);
     // 3) Render results
-    console.log(_modelJs.state.search.results);
     _viewsResultsViewDefault.default.render(_modelJs.state.search.results);
   } catch (err) {
     console.log(err);
   }
 };
-controlSearchResults();
-const init = () => {
+const init = function () {
   _viewsRecipeViewJsDefault.default.addHandlerRender(controlRecipes);
   _viewsSearchViewDefault.default.addHandlerSearch(controlSearchResults);
 };
@@ -12643,9 +12644,7 @@ class Recipeview {
             </div>
           </div>
           <div class="recipe__user-generated">
-            <svg>
-              <use href="${_urlImgIconsSvgDefault.default}#icon-user"></use>
-            </svg>
+          
           </div>
           <button class="btn--round">
             <svg class="">
@@ -13200,6 +13199,7 @@ class View {
     _defineProperty(this, "_data", void 0);
   }
   render(data) {
+    if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
     this._data = data;
     const markup = this._generateMarkup();
     this._clear();
@@ -13291,8 +13291,7 @@ exports.default = new SearchView();
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"1W90M":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
-var _urlImgIconsSvg = require('url:../../img/icons.svg');
-var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
+require('url:../../img/icons.svg');
 var _ViewJs = require('./View.js');
 var _ViewJsDefault = _parcelHelpers.interopDefault(_ViewJs);
 function _defineProperty(obj, key, value) {
@@ -13312,6 +13311,8 @@ class ResultsView extends _ViewJsDefault.default {
   constructor(...args) {
     super(...args);
     _defineProperty(this, "_parentElement", document.querySelector('.results'));
+    _defineProperty(this, "_errorMessage", 'No recipes were found. Please try again');
+    _defineProperty(this, "_successMessage", '');
   }
   _generateMarkup() {
     return this._data.map(this._generateMarkupPreview).join('');
@@ -13320,18 +13321,14 @@ class ResultsView extends _ViewJsDefault.default {
     console.log(results);
     return `
     <li class="preview">
-          <a class="preview__link preview__link--active" href="${results.id}">
+          <a class="preview__link " href="${results.id}">
             <figure class="preview__fig">
-              <img src="${results.image}" alt="Test" />
+              <img src="${results.image}" alt="${results.title}" />
             </figure>
             <div class="preview__data">
               <h4 class="preview__title">${results.title}</h4>
               <p class="preview__publisher">${results.publisher}</p>
-              <div class="preview__user-generated">
-                <svg>
-                  <use href="${_urlImgIconsSvgDefault.default}#icon-user"></use>
-                </svg>
-              </div>
+              
             </div>
           </a>
         </li>

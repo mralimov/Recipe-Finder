@@ -7,10 +7,12 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { async } from 'regenerator-runtime';
 
+//This is coming from Parcel
+if (module.hot) {
+  module.hot.accept();
+}
 const controlRecipes = async function () {
   try {
-    resultsView.renderSpinner();
-    console.log(resultsView);
     const id = window.location.hash.slice(1);
 
     if (!id) return;
@@ -26,8 +28,10 @@ const controlRecipes = async function () {
   }
 };
 
-const controlSearchResults = async () => {
+const controlSearchResults = async function () {
   try {
+    resultsView.renderSpinner();
+
     //1) Get search Query
     const query = searchView.getQuery();
     if (!query) return;
@@ -36,16 +40,13 @@ const controlSearchResults = async () => {
     await model.loadSearchResults(query);
 
     //3) Render results
-    console.log(model.state.search.results);
     resultsView.render(model.state.search.results);
   } catch (err) {
     console.log(err);
   }
 };
 
-controlSearchResults();
-
-const init = () => {
+const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
 };
