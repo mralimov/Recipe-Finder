@@ -12582,7 +12582,8 @@ const getJSON = async function (url) {
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","regenerator-runtime":"55WiQ","./config":"4ow7u"}],"4Oxfy":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
-require('./View.js');
+var _ViewJs = require('./View.js');
+var _ViewJsDefault = _parcelHelpers.interopDefault(_ViewJs);
 var _urlImgIconsSvg = require('url:../../img/icons.svg');
 var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
 var _fractional = require('fractional');
@@ -12599,8 +12600,9 @@ function _defineProperty(obj, key, value) {
   }
   return obj;
 }
-class Recipeview {
-  constructor() {
+class Recipeview extends _ViewJsDefault.default {
+  constructor(...args) {
+    super(...args);
     _defineProperty(this, "_parentElement", document.querySelector('.recipe'));
     _defineProperty(this, "_errorMessage", 'We could not find that recipe. Please try another one!');
     _defineProperty(this, "_successMessage", '');
@@ -13202,6 +13204,7 @@ class View {
     if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
     this._data = data;
     const markup = this._generateMarkup();
+    if (!render) return markup;
     this._clear();
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }

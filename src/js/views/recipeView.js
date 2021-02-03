@@ -2,7 +2,7 @@ import View from './View.js';
 import icons from 'url:../../img/icons.svg';
 import { Fraction } from 'fractional';
 
-class Recipeview {
+class Recipeview extends View {
   _parentElement = document.querySelector('.recipe');
   _errorMessage = 'We could not find that recipe. Please try another one!';
   _successMessage = '';
