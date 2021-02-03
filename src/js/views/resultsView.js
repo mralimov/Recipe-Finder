@@ -11,7 +11,6 @@ class ResultsView extends View {
   }
 
   _generateMarkupPreview(results) {
-    console.log(results);
     return `
     <li class="preview">
           <a class="preview__link " href="${results.id}">

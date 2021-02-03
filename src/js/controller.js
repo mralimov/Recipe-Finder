@@ -1,16 +1,16 @@
 import * as model from './model.js';
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView';
-import resultsView from './views/resultsView';
+import ResultsView from './views/resultsView';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { async } from 'regenerator-runtime';
 
 //This is coming from Parcel
-if (module.hot) {
-  module.hot.accept();
-}
+// if (module.hot) {
+//   module.hot.accept();
+// }
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
@@ -30,7 +30,7 @@ const controlRecipes = async function () {
 
 const controlSearchResults = async function () {
   try {
-    resultsView.renderSpinner();
+    ResultsView.renderSpinner();
 
     //1) Get search Query
     const query = searchView.getQuery();
@@ -40,7 +40,7 @@ const controlSearchResults = async function () {
     await model.loadSearchResults(query);
 
     //3) Render results
-    resultsView.render(model.state.search.results);
+    ResultsView.render(model.getSearchResultsPage());
   } catch (err) {
     console.log(err);
   }

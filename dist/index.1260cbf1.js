@@ -492,9 +492,9 @@ require('core-js/stable');
 require('regenerator-runtime/runtime');
 require('regenerator-runtime');
 // This is coming from Parcel
-if (module.hot) {
-  module.hot.accept();
-}
+// if (module.hot) {
+// module.hot.accept();
+// }
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
@@ -517,7 +517,7 @@ const controlSearchResults = async function () {
     // 2) loadsearchResults
     await _modelJs.loadSearchResults(query);
     // 3) Render results
-    _viewsResultsViewDefault.default.render(_modelJs.state.search.results);
+    _viewsResultsViewDefault.default.render(_modelJs.getSearchResultsPage());
   } catch (err) {
     console.log(err);
   }
@@ -12488,6 +12488,9 @@ _parcelHelpers.export(exports, "loadRecipe", function () {
 _parcelHelpers.export(exports, "loadSearchResults", function () {
   return loadSearchResults;
 });
+_parcelHelpers.export(exports, "getSearchResultsPage", function () {
+  return getSearchResultsPage;
+});
 require('regenerator-runtime');
 var _config = require('./config');
 var _helpers = require('./helpers');
@@ -12496,7 +12499,9 @@ const state = {
   search: {
     // search query for todo analytics to know which query was made the most
     query: '',
-    results: []
+    results: [],
+    page: 1,
+    resultsPerPage: _config.RES_PER_PAGE
   }
 };
 const loadRecipe = async function (id) {
@@ -12539,6 +12544,12 @@ const loadSearchResults = async query => {
     throw err;
   }
 };
+const getSearchResultsPage = (page = state.search.page) => {
+  state.search.page = page;
+  const start = (page - 1) * state.search.resultsPerPage;
+  const end = page * state.search.resultsPerPage;
+  return state.search.results.slice(start, end);
+};
 
 },{"regenerator-runtime":"55WiQ","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","./config":"4ow7u","./helpers":"Fq8n8"}],"4ow7u":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -12549,8 +12560,12 @@ _parcelHelpers.export(exports, "API_URL", function () {
 _parcelHelpers.export(exports, "TIMEOUT_SEC", function () {
   return TIMEOUT_SEC;
 });
+_parcelHelpers.export(exports, "RES_PER_PAGE", function () {
+  return RES_PER_PAGE;
+});
 const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 const TIMEOUT_SEC = 10;
+const RES_PER_PAGE = 10;
 
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"Fq8n8":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -13321,7 +13336,6 @@ class ResultsView extends _ViewJsDefault.default {
     return this._data.map(this._generateMarkupPreview).join('');
   }
   _generateMarkupPreview(results) {
-    console.log(results);
     return `
     <li class="preview">
           <a class="preview__link " href="${results.id}">
