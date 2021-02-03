@@ -484,15 +484,18 @@ var _modelJs = require('./model.js');
 var _viewsRecipeViewJs = require('./views/recipeView.js');
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 var _viewsRecipeViewJsDefault = _parcelHelpers.interopDefault(_viewsRecipeViewJs);
+var _viewsSearchView = require('./views/searchView');
+var _viewsSearchViewDefault = _parcelHelpers.interopDefault(_viewsSearchView);
+var _viewsResultsView = require('./views/resultsView');
+var _viewsResultsViewDefault = _parcelHelpers.interopDefault(_viewsResultsView);
 require('core-js/stable');
 require('regenerator-runtime/runtime');
-const recipeContainer = document.querySelector('.recipe');
-// https://forkify-api.herokuapp.com/v2
-// /////////////////////////////////////
+require('regenerator-runtime');
 const controlRecipes = async function () {
   try {
+    _viewsResultsViewDefault.default.renderSpinner();
+    console.log(_viewsResultsViewDefault.default);
     const id = window.location.hash.slice(1);
-    console.log(id);
     if (!id) return;
     _viewsRecipeViewJsDefault.default.renderSpinner();
     // 1) Loading Spinner
@@ -503,12 +506,28 @@ const controlRecipes = async function () {
     _viewsRecipeViewJsDefault.default.renderError();
   }
 };
+const controlSearchResults = async () => {
+  try {
+    // 1) Get search Query
+    const query = _viewsSearchViewDefault.default.getQuery();
+    if (!query) return;
+    // 2) loadsearchResults
+    await _modelJs.loadSearchResults(query);
+    // 3) Render results
+    console.log(_modelJs.state.search.results);
+    _viewsResultsViewDefault.default.render(_modelJs.state.search.results);
+  } catch (err) {
+    console.log(err);
+  }
+};
+controlSearchResults();
 const init = () => {
   _viewsRecipeViewJsDefault.default.addHandlerRender(controlRecipes);
+  _viewsSearchViewDefault.default.addHandlerSearch(controlSearchResults);
 };
 init();
 
-},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","core-js/stable":"5FWMh","regenerator-runtime/runtime":"55WiQ","./model.js":"1CGDk","./views/recipeView.js":"4Oxfy"}],"HNevC":[function(require,module,exports) {
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","core-js/stable":"5FWMh","regenerator-runtime/runtime":"55WiQ","./model.js":"1CGDk","./views/recipeView.js":"4Oxfy","regenerator-runtime":"55WiQ","./views/searchView":"7smyK","./views/resultsView":"1W90M"}],"HNevC":[function(require,module,exports) {
 "use strict";
 
 exports.interopDefault = function (a) {
@@ -12465,15 +12484,23 @@ _parcelHelpers.export(exports, "state", function () {
 _parcelHelpers.export(exports, "loadRecipe", function () {
   return loadRecipe;
 });
+_parcelHelpers.export(exports, "loadSearchResults", function () {
+  return loadSearchResults;
+});
 require('regenerator-runtime');
 var _config = require('./config');
 var _helpers = require('./helpers');
 const state = {
-  recipe: {}
+  recipe: {},
+  search: {
+    // search query for todo analytics to know which query was made the most
+    query: '',
+    results: []
+  }
 };
 const loadRecipe = async function (id) {
   try {
-    const data = await _helpers.getJSON(`${_config.API_URL}/${id}}`);
+    const data = await _helpers.getJSON(`${_config.API_URL}${id}`);
     // const res = await fetch(`${API_URL}/${id}`);
     // const data = await res.json();
     // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
@@ -12494,6 +12521,23 @@ const loadRecipe = async function (id) {
     throw err;
   }
 };
+const loadSearchResults = async query => {
+  try {
+    state.search.query = query;
+    const allRecipe = await _helpers.getJSON(`${_config.API_URL}?search=${query}`);
+    state.search.results = allRecipe.data.recipes.map(recipe => {
+      return {
+        id: recipe.id,
+        title: recipe.title,
+        publisher: recipe.publisher,
+        image: recipe.image_url
+      };
+    });
+  } catch (err) {
+    console.error(`This is loadRecipe ${err}`);
+    throw err;
+  }
+};
 
 },{"regenerator-runtime":"55WiQ","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","./config":"4ow7u","./helpers":"Fq8n8"}],"4ow7u":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -12504,7 +12548,7 @@ _parcelHelpers.export(exports, "API_URL", function () {
 _parcelHelpers.export(exports, "TIMEOUT_SEC", function () {
   return TIMEOUT_SEC;
 });
-const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 const TIMEOUT_SEC = 10;
 
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"Fq8n8":[function(require,module,exports) {
@@ -12525,7 +12569,7 @@ const timeout = function (s) {
 const getJSON = async function (url) {
   try {
     const fetchPromise = fetch(url);
-    const res = await Promice.race([fetchPromise, timeout(_config.TIMEOUT_SEC)]);
+    const res = await Promise.race([fetchPromise, timeout(_config.TIMEOUT_SEC)]);
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     return data;
@@ -12537,127 +12581,38 @@ const getJSON = async function (url) {
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","regenerator-runtime":"55WiQ","./config":"4ow7u"}],"4Oxfy":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
+require('./View.js');
 var _urlImgIconsSvg = require('url:../../img/icons.svg');
 var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
 var _fractional = require('fractional');
-function _classPrivateFieldGet(receiver, privateMap) {
-  var descriptor = privateMap.get(receiver);
-  if (!descriptor) {
-    throw new TypeError("attempted to get private field on non-instance");
-  }
-  if (descriptor.get) {
-    return descriptor.get.call(receiver);
-  }
-  return descriptor.value;
-}
-function _classPrivateMethodGet(receiver, privateSet, fn) {
-  if (!privateSet.has(receiver)) {
-    throw new TypeError("attempted to get private field on non-instance");
-  }
-  return fn;
-}
-function _classPrivateFieldSet(receiver, privateMap, value) {
-  var descriptor = privateMap.get(receiver);
-  if (!descriptor) {
-    throw new TypeError("attempted to set private field on non-instance");
-  }
-  if (descriptor.set) {
-    descriptor.set.call(receiver, value);
+function _defineProperty(obj, key, value) {
+  if ((key in obj)) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
   } else {
-    if (!descriptor.writable) {
-      throw new TypeError("attempted to set read only private field");
-    }
-    descriptor.value = value;
+    obj[key] = value;
   }
-  return value;
+  return obj;
 }
-var _parentElement = new WeakMap();
-var _data = new WeakMap();
-var _errorMessage = new WeakMap();
-var _successMessage = new WeakMap();
-var _clear = new WeakSet();
-var _generateMarkup = new WeakSet();
-var _generateMarkupIngredient = new WeakSet();
 class Recipeview {
   constructor() {
-    _generateMarkupIngredient.add(this);
-    _generateMarkup.add(this);
-    _clear.add(this);
-    _parentElement.set(this, {
-      writable: true,
-      value: document.querySelector('.recipe')
-    });
-    _data.set(this, {
-      writable: true,
-      value: void 0
-    });
-    _errorMessage.set(this, {
-      writable: true,
-      value: 'We could not find that recipe. Please try another one!'
-    });
-    _successMessage.set(this, {
-      writable: true,
-      value: ''
-    });
-  }
-  render(data) {
-    _classPrivateFieldSet(this, _data, data);
-    const markup = _classPrivateMethodGet(this, _generateMarkup, _generateMarkup2).call(this);
-    _classPrivateMethodGet(this, _clear, _clear2).call(this);
-    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markup);
-  }
-  renderSpinner() {
-    const markupSpinner = `
-      <div class="spinner">
-            <svg>
-              <use href="${_urlImgIconsSvgDefault.default}#icon-loader"></use>
-            </svg>
-          </div>
-      `;
-    _classPrivateMethodGet(this, _clear, _clear2).call(this);
-    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markupSpinner);
-  }
-  renderError(message = _classPrivateFieldGet(this, _errorMessage)) {
-    const markupError = `
-      <div class="error">
-            <div>
-              <svg>
-                <use href="${_urlImgIconsSvgDefault.default}#icon-alert-triangle"></use>
-              </svg>
-            </div>
-            <p>${message}</p>
-          </div>
-      `;
-    _classPrivateMethodGet(this, _clear, _clear2).call(this);
-    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markupError);
-  }
-  renderSuccess(message = _classPrivateFieldGet(this, _successMessage)) {
-    const markupSuccess = `
-      <div class="message">
-            <div>
-              <svg>
-                <use href="${_urlImgIconsSvgDefault.default}#icon-smile"></use>
-              </svg>
-            </div>
-            <p>${message}</p>
-          </div>
-      `;
-    _classPrivateMethodGet(this, _clear, _clear2).call(this);
-    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markupSuccess);
+    _defineProperty(this, "_parentElement", document.querySelector('.recipe'));
+    _defineProperty(this, "_errorMessage", 'We could not find that recipe. Please try another one!');
+    _defineProperty(this, "_successMessage", '');
   }
   addHandlerRender(handler) {
     ['haschange', 'load'].forEach(ev => window.addEventListener(ev, handler));
   }
-}
-var _clear2 = function _clear2() {
-  _classPrivateFieldGet(this, _parentElement).innerHTML = '';
-};
-var _generateMarkup2 = function _generateMarkup2() {
-  return `
+  _generateMarkup() {
+    return `
     <figure class="recipe__fig">
-          <img src="${_classPrivateFieldGet(this, _data).image}" alt="${_classPrivateFieldGet(this, _data).title}" class="recipe__img" />
+          <img src="${this._data.image}" alt="${this._data.title}" class="recipe__img" />
           <h1 class="recipe__title">
-            <span>${_classPrivateFieldGet(this, _data).title}</span>
+            <span>${this._data.title}</span>
           </h1>
         </figure>
         <div class="recipe__details">
@@ -12665,14 +12620,14 @@ var _generateMarkup2 = function _generateMarkup2() {
             <svg class="recipe__info-icon">
               <use href="${_urlImgIconsSvgDefault.default}#icon-clock"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${_classPrivateFieldGet(this, _data).cookingTime}</span>
+            <span class="recipe__info-data recipe__info-data--minutes">${this._data.cookingTime}</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
             <svg class="recipe__info-icon">
               <use href="${_urlImgIconsSvgDefault.default}#icon-users"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--people">${_classPrivateFieldGet(this, _data).servings}</span>
+            <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
             <span class="recipe__info-text">servings</span>
             <div class="recipe__info-buttons">
               <button class="btn--tiny btn--increase-servings">
@@ -12702,18 +12657,18 @@ var _generateMarkup2 = function _generateMarkup2() {
         <div class="recipe__ingredients">
           <h2 class="heading--2">Recipe ingredients</h2>
           <ul class="recipe__ingredient-list">
-          ${_classPrivateFieldGet(this, _data).ingredients.map(_classPrivateMethodGet(this, _generateMarkupIngredient, _generateMarkupIngredient2)).join('')}        
+          ${this._data.ingredients.map(this._generateMarkupIngredient).join('')}        
         </div>
         <div class="recipe__directions">
           <h2 class="heading--2">How to cook it</h2>
           <p class="recipe__directions-text">
             This recipe was carefully designed and tested by
-            <span class="recipe__publisher">${_classPrivateFieldGet(this, _data).publisher}</span>. Please check out
+            <span class="recipe__publisher">${this._data.publisher}</span>. Please check out
             directions at their website.
           </p>
           <a
             class="btn--small recipe__btn"
-            href="${_classPrivateFieldGet(this, _data).sourceUrl}"
+            href="${this._data.sourceUrl}"
             target="_blank"
           >
             <span>Directions</span>
@@ -12723,9 +12678,9 @@ var _generateMarkup2 = function _generateMarkup2() {
           </a>
         </div>
     `;
-};
-var _generateMarkupIngredient2 = function _generateMarkupIngredient2(ing) {
-  return ` 
+  }
+  _generateMarkupIngredient(ing) {
+    return ` 
       <li class="recipe__ingredient">
         <svg class="recipe__icon">
           <use href="${_urlImgIconsSvgDefault.default}#icon-check"></use>
@@ -12736,10 +12691,11 @@ var _generateMarkupIngredient2 = function _generateMarkupIngredient2(ing) {
           ${ing.description}
         </div>
       </li> `;
-};
+  }
+}
 exports.default = new Recipeview();
 
-},{"url:../../img/icons.svg":"6nOe0","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","fractional":"7jl16"}],"6nOe0":[function(require,module,exports) {
+},{"url:../../img/icons.svg":"6nOe0","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","fractional":"7jl16","./View.js":"4odjm"}],"6nOe0":[function(require,module,exports) {
 module.exports = require('./bundle-url').getBundleURL() + require('./relative-path')("5gbPA", "27vdb")
 },{"./bundle-url":"3nFkr","./relative-path":"3gCji"}],"3nFkr":[function(require,module,exports) {
 "use strict";
@@ -13221,6 +13177,169 @@ Fraction.primeFactors = function(n)
 
 module.exports.Fraction = Fraction
 
-},{}]},["5cvg8","2hFLu","1mIsM"], "1mIsM", "parcelRequire5e36")
+},{}],"4odjm":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+var _urlImgIconsSvg = require('url:../../img/icons.svg');
+var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
+function _defineProperty(obj, key, value) {
+  if ((key in obj)) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+class View {
+  constructor() {
+    _defineProperty(this, "_data", void 0);
+  }
+  render(data) {
+    this._data = data;
+    const markup = this._generateMarkup();
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+  _clear() {
+    this._parentElement.innerHTML = '';
+  }
+  renderSpinner() {
+    const markupSpinner = `
+      <div class="spinner">
+            <svg>
+              <use href="${_urlImgIconsSvgDefault.default}#icon-loader"></use>
+            </svg>
+          </div>
+      `;
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markupSpinner);
+  }
+  renderError(message = this._errorMessage) {
+    const markupError = `
+      <div class="error">
+            <div>
+              <svg>
+                <use href="${_urlImgIconsSvgDefault.default}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+      `;
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markupError);
+  }
+  renderSuccess(message = this._successMessage) {
+    const markupSuccess = `
+      <div class="message">
+            <div>
+              <svg>
+                <use href="${_urlImgIconsSvgDefault.default}#icon-smile"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+      `;
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markupSuccess);
+  }
+}
+exports.default = View;
+
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","url:../../img/icons.svg":"6nOe0"}],"7smyK":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+function _defineProperty(obj, key, value) {
+  if ((key in obj)) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+class SearchView {
+  constructor() {
+    _defineProperty(this, "_parentEL", document.querySelector('.search'));
+  }
+  // method to get query input value
+  getQuery() {
+    const query = this._parentEL.querySelector('.search__field').value;
+    this._clearInput();
+    return query;
+  }
+  _clearInput() {
+    this._parentEL.querySelector('.search__field').value = '';
+  }
+  addHandlerSearch(handler) {
+    this._parentEL.addEventListener('submit', e => {
+      e.preventDefault();
+      handler();
+    });
+  }
+}
+exports.default = new SearchView();
+
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC"}],"1W90M":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+var _urlImgIconsSvg = require('url:../../img/icons.svg');
+var _urlImgIconsSvgDefault = _parcelHelpers.interopDefault(_urlImgIconsSvg);
+var _ViewJs = require('./View.js');
+var _ViewJsDefault = _parcelHelpers.interopDefault(_ViewJs);
+function _defineProperty(obj, key, value) {
+  if ((key in obj)) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+class ResultsView extends _ViewJsDefault.default {
+  constructor(...args) {
+    super(...args);
+    _defineProperty(this, "_parentElement", document.querySelector('.results'));
+  }
+  _generateMarkup() {
+    return this._data.map(this._generateMarkupPreview).join('');
+  }
+  _generateMarkupPreview(results) {
+    console.log(results);
+    return `
+    <li class="preview">
+          <a class="preview__link preview__link--active" href="${results.id}">
+            <figure class="preview__fig">
+              <img src="${results.image}" alt="Test" />
+            </figure>
+            <div class="preview__data">
+              <h4 class="preview__title">${results.title}</h4>
+              <p class="preview__publisher">${results.publisher}</p>
+              <div class="preview__user-generated">
+                <svg>
+                  <use href="${_urlImgIconsSvgDefault.default}#icon-user"></use>
+                </svg>
+              </div>
+            </div>
+          </a>
+        </li>
+    `;
+  }
+}
+exports.default = new ResultsView();
+
+},{"./View.js":"4odjm","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","url:../../img/icons.svg":"6nOe0"}]},["5cvg8","2hFLu","1mIsM"], "1mIsM", "parcelRequire5e36")
 
 //# sourceMappingURL=index.1260cbf1.js.map
