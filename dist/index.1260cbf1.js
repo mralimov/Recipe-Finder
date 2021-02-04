@@ -533,6 +533,12 @@ const controlPagination = goToPage => {
   _viewsPaginationViewDefault.default.render(_modelJs.state.search);
   console.log(goToPage);
 };
+const controlServings = function () {
+  // Update the recipe servings (in the State)
+  _modelJs.updateServings(8);
+  // Update the recipe view
+  _viewsRecipeViewJsDefault.default.render(_modelJs.state.recipe);
+};
 const init = function () {
   _viewsRecipeViewJsDefault.default.addHandlerRender(controlRecipes);
   _viewsSearchViewDefault.default.addHandlerSearch(controlSearchResults);
@@ -12503,6 +12509,9 @@ _parcelHelpers.export(exports, "loadSearchResults", function () {
 _parcelHelpers.export(exports, "getSearchResultsPage", function () {
   return getSearchResultsPage;
 });
+_parcelHelpers.export(exports, "updateServings", function () {
+  return updateServings;
+});
 require('regenerator-runtime');
 var _config = require('./config');
 var _helpers = require('./helpers');
@@ -12561,6 +12570,12 @@ const getSearchResultsPage = (page = state.search.page) => {
   const start = (page - 1) * state.search.resultsPerPage;
   const end = page * state.search.resultsPerPage;
   return state.search.results.slice(start, end);
+};
+const updateServings = function (newServings) {
+  state.recipe.ingredients.forEach(ing => {
+    ing.quantity = ing.quantity * newServings / state.recipe.servings;
+  });
+  state.recipe.servings = newServings;
 };
 
 },{"regenerator-runtime":"55WiQ","@parcel/transformer-js/lib/esmodule-helpers.js":"HNevC","./config":"4ow7u","./helpers":"Fq8n8"}],"4ow7u":[function(require,module,exports) {
@@ -12637,6 +12652,7 @@ class Recipeview extends _ViewJsDefault.default {
   addHandlerRender(handler) {
     ['haschange', 'load'].forEach(ev => window.addEventListener(ev, handler));
   }
+  addHandlerUpdateServings(handler) {}
   _generateMarkup() {
     return `
     <figure class="recipe__fig">
@@ -13346,6 +13362,7 @@ class ResultsView extends _ViewJsDefault.default {
   }
   _generateMarkup() {
     return this._data.map(this._generateMarkupPreview).join('');
+    console.log(this._data);
   }
   _generateMarkupPreview(results) {
     return `

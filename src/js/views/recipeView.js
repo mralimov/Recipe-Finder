@@ -11,6 +11,8 @@ class Recipeview extends View {
     ['haschange', 'load'].forEach((ev) => window.addEventListener(ev, handler));
   }
 
+  addHandlerUpdateServings(handler) {}
+
   _generateMarkup() {
     return `
     <figure class="recipe__fig">

@@ -8,6 +8,7 @@ class ResultsView extends View {
 
   _generateMarkup() {
     return this._data.map(this._generateMarkupPreview).join('');
+    console.log(this._data);
   }
 
   _generateMarkupPreview(results) {
