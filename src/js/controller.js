@@ -19,6 +19,9 @@ const controlRecipes = async function () {
     if (!id) return;
     recipeView.renderSpinner();
 
+    //0) Update results view to mark selected search result
+    resultsView.update(model.getSearchResultsPage());
+
     //1) Loading Spinner
     await model.loadRecipe(id);
 
@@ -41,7 +44,7 @@ const controlSearchResults = async function () {
     await model.loadSearchResults(query);
 
     //3) Render results
-    resultsView.render(model.getSearchResultsPage(1));
+    resultsView.render(model.getSearchResultsPage());
 
     //4) Rendering pagination View
     paginationView.render(model.state.search);
@@ -50,7 +53,7 @@ const controlSearchResults = async function () {
   }
 };
 
-const controlPagination = (goToPage) => {
+const controlPagination = function (goToPage) {
   //1) Render New results
   resultsView.render(model.getSearchResultsPage(goToPage));
 
@@ -65,12 +68,22 @@ const controlServings = function (newServings) {
   model.updateServings(newServings);
 
   //Update the recipe view
-  recipeView.render(model.state.recipe);
+  // recipeView.render(model.state.recipe);
+  recipeView.update(model.state.recipe);
+};
+
+const controlAddBookmark = function () {
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else model.state.recipe.bookmarked;
+  model.deleteBookmark(model.state.recipe.id);
+
+  recipeView.update(model.state.recipe);
 };
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
+  recipeView.addHandlerAddBookmark(controlAddBookmark);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
 };

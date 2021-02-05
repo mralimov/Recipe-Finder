@@ -12,6 +12,7 @@ export const state = {
     page: 1,
     resultsPerPage: RES_PER_PAGE,
   },
+  bookmarks: [],
 };
 
 export const loadRecipe = async function (id) {
@@ -35,6 +36,10 @@ export const loadRecipe = async function (id) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
     };
+    if (state.bookmarks.some((bookmark) => bookmark.id === id))
+      state.recipe.bookmarked = true;
+    else state.recipe.bookmarked = false;
+
     console.log(state.recipe);
   } catch (err) {
     console.error(`This is loadRecipe ${err}`);
@@ -45,23 +50,26 @@ export const loadRecipe = async function (id) {
 export const loadSearchResults = async (query) => {
   try {
     state.search.query = query;
+
     const allRecipe = await getJSON(`${API_URL}?search=${query}`);
 
-    state.search.results = allRecipe.data.recipes.map((recipe) => {
+    state.search.results = allRecipe.data.recipes.map((rec) => {
       return {
-        id: recipe.id,
-        title: recipe.title,
-        publisher: recipe.publisher,
-        image: recipe.image_url,
+        id: rec.id,
+        title: rec.title,
+        publisher: rec.publisher,
+        image: rec.image_url,
       };
     });
+    //When ever u do new search in middle of pages it will get back to page 1
+    state.search.page = 1;
   } catch (err) {
     console.error(`This is loadRecipe ${err}`);
     throw err;
   }
 };
 
-export const getSearchResultsPage = (page = state.search.page) => {
+export const getSearchResultsPage = function (page = state.search.page) {
   state.search.page = page;
 
   const start = (page - 1) * state.search.resultsPerPage;
@@ -77,4 +85,22 @@ export const updateServings = function (newServings) {
   });
 
   state.recipe.servings = newServings;
+};
+
+export const addBookmark = function (recipe) {
+  //Add bookmark
+  state.bookmarks.push(recipe);
+
+  //Mark current recipe as bookmark
+  if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+};
+
+//DELETE Bookmark
+const deleteBookmark = function (id) {
+  const index = state.bookmarks.findIndex((el) => el.id === id);
+  state.bookmarks.splice(index, 1);
+
+  //UnMark current recipe as NOT bookmark
+
+  if (id === state.recipe.id) state.recipe.bookmarked = false;
 };
