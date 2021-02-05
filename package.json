@@ -1,29 +1,29 @@
 {
-  "name": "recipe-finder",
+  "name": "forkify",
   "version": "1.0.0",
-  "description": "Finding recipes",
-  "main": "index.html",
+  "description": "Recipe application",
+  "default": "index.html",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html --dist-dir ./dist"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mralimov/Recipe-Finder.git"
   },
-  "author": "Donnie Alimov",
+  "author": "Jonas Schedtmann",
   "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.0.0-beta.1",
+    "sass": "^1.26.10"
+  },
   "bugs": {
     "url": "https://github.com/mralimov/Recipe-Finder/issues"
   },
-  "homepage": "https://github.com/mralimov/Recipe-Finder#readme",
   "dependencies": {
-    "core-js": "^3.8.3",
+    "core-js": "^3.6.5",
     "fractional": "^1.0.0",
     "regenerator-runtime": "^0.13.7"
   },
-  "devDependencies": {
-    "parcel": "^2.0.0-nightly.553",
-    "sass": "^1.32.5"
-  }
+  "homepage": "https://github.com/mralimov/Recipe-Finder#readme"
 }
