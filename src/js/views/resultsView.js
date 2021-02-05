@@ -16,7 +16,7 @@ class ResultsView extends View {
     return `
     <li class="preview">
           <a class="preview__link ${
-            result.id === id ? 'preview__link--active' : ''
+            results.id === id ? 'preview__link--active' : ''
           }" href="${results.id}">
             <figure class="preview__fig">
               <img src="${results.image}" alt="${results.title}" />
