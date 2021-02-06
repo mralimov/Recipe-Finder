@@ -29,7 +29,8 @@ export default class View {
       const curEl = curElements[i];
       console.log(curEl, newEl.isEqualNode(curEl));
 
-      //updates changed tex
+      //updates changed tex     //
+
       if (
         !newEl.isEqualNode(curEl) &&
         newEl.firstChild?.nodeValue.trim() !== ''
