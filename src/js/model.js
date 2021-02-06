@@ -1,12 +1,12 @@
 import { async } from 'regenerator-runtime';
 import { API_URL, RES_PER_PAGE, KEY } from './config';
-import { getJSON, sendJSON } from './helpers';
+// import { getJSON, sendJSON } from './helpers';
+import { AJAX } from './helpers';
 
 //state contains all data about application
 export const state = {
   recipe: {},
   search: {
-    //search query for todo analytics to know which query was made the most
     query: '',
     results: [],
     page: 1,
@@ -15,27 +15,25 @@ export const state = {
   bookmarks: [],
 };
 
+const createRecipeObject = function (data) {
+  const { recipe } = data.data;
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    publisher: recipe.publisher,
+    soureUrl: recipe.source_url,
+    image: recipe.image_url,
+    servings: recipe.servings,
+    cookingTime: recipe.cooking_time,
+    ingredients: recipe.ingredients,
+    ...(recipe.key && { key: recipe.key }),
+  };
+};
 export const loadRecipe = async function (id) {
   try {
-    const data = await getJSON(`${API_URL}${id}`);
+    const data = await AJAX(`${API_URL}${id}?key=${KEY}`);
+    state.recipe = createRecipeObject(data);
 
-    // const res = await fetch(`${API_URL}/${id}`);
-
-    // const data = await res.json();
-
-    // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
-    const { recipe } = data.data;
-    state.recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      soureUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    };
     if (state.bookmarks.some((bookmark) => bookmark.id === id))
       state.recipe.bookmarked = true;
     else state.recipe.bookmarked = false;
@@ -51,9 +49,9 @@ export const loadSearchResults = async (query) => {
   try {
     state.search.query = query;
 
-    const allRecipe = await getJSON(`${API_URL}?search=${query}`);
+    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
 
-    state.search.results = allRecipe.data.recipes.map((rec) => {
+    state.search.results = data.data.recipes.map((rec) => {
       return {
         id: rec.id,
         title: rec.title,
@@ -146,7 +144,9 @@ export const uploadRecipe = async function (newRecipe) {
       ingredients,
     };
 
-    const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+    const data = await AJAX(`${API_URL}?key=${KEY}`, recipe);
+    state.recipe = createRecipeObject(data);
+    addBookmark(state.recipe);
   } catch (err) {
     throw err;
   }
