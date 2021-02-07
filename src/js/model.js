@@ -57,6 +57,7 @@ export const loadSearchResults = async (query) => {
         title: rec.title,
         publisher: rec.publisher,
         image: rec.image_url,
+        ...(rec.key && { key: rec.key }),
       };
     });
     //When ever u do new search in middle of pages it will get back to page 1
