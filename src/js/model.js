@@ -57,6 +57,7 @@ export const loadSearchResults = async (query) => {
         title: rec.title,
         publisher: rec.publisher,
         image: rec.image_url,
+        ...(rec.key && { key: rec.key }),
       };
     });
     //When ever u do new search in middle of pages it will get back to page 1
@@ -126,7 +127,7 @@ export const uploadRecipe = async function (newRecipe) {
     const ingredients = Object.entries(newRecipe)
       .filter((entry) => entry[0].startsWith('ingredient') && entry[1] !== '')
       .map((ing) => {
-        const ingArray = ing[1].replaceAll(' ', '').split(',');
+        const ingArray = ing[1].split(',').mao((el) => el.trim());
         if (ingArray.length !== 3)
           throw new Error('Wrong ingredient format! Pleaes use correct format');
 
