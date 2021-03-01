@@ -8,16 +8,17 @@ class ResultsView extends View {
   _successMessage = '';
 
   _generateMarkup() {
-    return this._data.map(this._generateMarkupPreview).join('');
-    console.log(this._data);
-  }
-
-  _generateMarkup() {
-    console.log(this._data);
     return this._data
       .map((result) => previewView.render(result, false))
       .join('');
   }
-}
 
+  //   _generateMarkup() {
+  //     console.log(this._data);
+  //     return this._data
+  //       .map((result) => previewView.render(result, false))
+  //       .join('');
+  //   }
+  // }
+}
 export default new ResultsView();
