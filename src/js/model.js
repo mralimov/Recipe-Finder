@@ -31,6 +31,7 @@ const createRecipeObject = function (data) {
 };
 export const loadRecipe = async function (id) {
   try {
+    console.log(id);
     const data = await AJAX(`${API_URL}${id}?key=${KEY}`);
     state.recipe = createRecipeObject(data);
 
@@ -63,7 +64,7 @@ export const loadSearchResults = async function (query) {
     //When ever u do new search in middle of pages it will get back to page 1
     state.search.page = 1;
   } catch (err) {
-    console.error(`This is loadRecipe ${err}`);
+    console.error(`This is loadRecipe 66 ${err}`);
     throw err;
   }
 };
@@ -101,7 +102,7 @@ export const addBookmark = function (recipe) {
 };
 
 //DELETE Bookmark
-const deleteBookmark = function (id) {
+export const deleteBookmark = function (id) {
   const index = state.bookmarks.findIndex((el) => el.id === id);
   state.bookmarks.splice(index, 1);
 
