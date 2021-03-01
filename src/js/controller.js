@@ -1,5 +1,5 @@
 import * as model from './model.js';
-import { MODAL_CLOSE_SEC } from './config';
+import { MODAL_CLOSE_SEC } from './config.js';
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView';
 import resultsView from './views/resultsView';
@@ -25,14 +25,14 @@ const controlRecipes = async function () {
     //0) Update results view to mark selected search result
     resultsView.update(model.getSearchResultsPage());
 
-    //1) Loading Spinner
+    //1)   // 3) Updating bookmark
+    bookmarksView.update(model.state.bookmarks);
+
+    //2)Loading Spinner
     await model.loadRecipe(id);
 
-    //2) Rendering recipe
+    //3) Rendering recipe
     recipeView.render(model.state.recipe);
-
-    // 3) Updating bookmark
-    bookmarksView.update(model.state.bookmarks);
   } catch (err) {
     recipeView.renderError();
   }
@@ -42,15 +42,15 @@ const controlSearchResults = async function () {
   try {
     resultsView.renderSpinner();
 
-    //1) Render results
-    resultsView.render(model.getSearchResultsPage());
-
-    //2) Get search Query
+    //1)  //2) Get search Query
     const query = searchView.getQuery();
     if (!query) return;
 
-    //3) loadsearchResults
+    //2) load search Results
     await model.loadSearchResults(query);
+
+    //3) Render results
+    resultsView.render(model.getSearchResultsPage());
 
     //4) Rendering pagination View
     paginationView.render(model.state.search);
@@ -65,8 +65,6 @@ const controlPagination = function (goToPage) {
 
   //2) Rendering new pagination button
   paginationView.render(model.state.search);
-
-  console.log(goToPage);
 };
 
 const controlServings = function (newServings) {
@@ -81,8 +79,7 @@ const controlServings = function (newServings) {
 const controlAddBookmark = function () {
   //1) Add/remove bookmark
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
-  else model.state.recipe.bookmarked;
-  model.deleteBookmark(model.state.recipe.id);
+  else model.deleteBookmark(model.state.recipe.id);
 
   //2) Update recipe view
   recipeView.update(model.state.recipe);
