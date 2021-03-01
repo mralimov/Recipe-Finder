@@ -1,11 +1,11 @@
 import * as model from './model.js';
 import { MODAL_CLOSE_SEC } from './config.js';
 import recipeView from './views/recipeView.js';
-import searchView from './views/searchView';
-import resultsView from './views/resultsView';
-import bookmarksView from './views/bookmarksView';
-import paginationView from './views/paginationView';
-import addRecipeView from './views/addRecipeView';
+import searchView from './views/searchView.js';
+import resultsView from './views/resultsView.js';
+import bookmarksView from './views/bookmarksView.js';
+import paginationView from './views/paginationView.js';
+import addRecipeView from './views/addRecipeView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -18,6 +18,7 @@ import { async } from 'regenerator-runtime';
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
+    console.log(id);
 
     if (!id) return;
     recipeView.renderSpinner();
@@ -35,6 +36,7 @@ const controlRecipes = async function () {
     recipeView.render(model.state.recipe);
   } catch (err) {
     recipeView.renderError();
+    console.log(`${id} Error in controller 38 line`);
   }
 };
 
@@ -55,7 +57,7 @@ const controlSearchResults = async function () {
     //4) Rendering pagination View
     paginationView.render(model.state.search);
   } catch (err) {
-    console.log(err);
+    console.log(`${err} Error in controller 59 line`);
   }
 };
 
@@ -117,7 +119,7 @@ const controlAddRecipe = async function (newRecipe) {
       addRecipeView.toggleWindow();
     }, MODAL_CLOSE_SEC * 1000);
   } catch (err) {
-    console.log(`Error from controlAddRecipe ${err}`);
+    console.log(`Error from controlAddRecipe 121 ${err}`);
     addRecipeView.renderError(err.message);
   }
 };
