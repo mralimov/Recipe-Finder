@@ -1,29 +1,29 @@
 {
-  "name": "forkify",
+  "name": "recipe-finder",
   "version": "1.0.0",
-  "description": "Recipe application",
-  "default": "index.html",
+  "description": "Help with finding foor recipe",
+  "main": "index.html",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html --dist-dir ./dist"
+    "build": "parcel build index.html"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mralimov/Recipe-Finder.git"
+    "url": "git+https://github.com/mralimov/Recipe-Finder-JS-OOP.git"
   },
-  "author": "Jonas Schedtmann",
+  "author": "Donnie Alimov",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mralimov/Recipe-Finder-JS-OOP/issues"
+  },
+  "homepage": "https://github.com/mralimov/Recipe-Finder-JS-OOP#readme",
   "devDependencies": {
     "parcel": "^2.0.0-beta.1",
-    "sass": "^1.26.10"
-  },
-  "bugs": {
-    "url": "https://github.com/mralimov/Recipe-Finder/issues"
+    "sass": "^1.32.8"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
+    "core-js": "^3.9.1",
     "fractional": "^1.0.0",
     "regenerator-runtime": "^0.13.7"
-  },
-  "homepage": "https://github.com/mralimov/Recipe-Finder#readme"
+  }
 }
